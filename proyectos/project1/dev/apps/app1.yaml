@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dev-app1-app
+  namespace: openshift-gitops
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: dev-project1
+    server: https://kubernetes.default.svc
+  project: dev-project1
+  source:
+    path: overlay/dev
+    repoURL: git@REPO:REPO/app1-gitops.git
+    targetRevision: master
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+    - Validate=false
+    - ApplyOutOfSyncOnly=true

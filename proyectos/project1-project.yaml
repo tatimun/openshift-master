@@ -1,0 +1,226 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: project1
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: Namespace
+  - group: argoproj.io
+    kind: Application
+  - group: argoproj.io
+    kind: AppProject
+  - group: argoproj.io
+    kind: ApplicationSet
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: Pipeline
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: LimitRange
+  - group: '*'
+    kind: ResourceQuota
+  - group: '*'
+    kind: ClusterTask
+  destinations:
+  - namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  - namespace: dev-project1
+    server: https://kubernetes.default.svc
+  - namespace: test-project1
+    server: https://kubernetes.default.svc
+  - namespace: homo-project1
+    server: https://kubernetes.default.svc
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: NetworkPolicy
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: dev-project1
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: Namespace
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: Pipeline
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: LimitRange
+  - group: '*'
+    kind: ResourceQuota
+  - group: '*'
+    kind: Deployment
+  - group: '*'
+    kind: DeploymentConfig
+  - group: '*'
+    kind: Service
+  - group: '*'
+    kind: Route
+  - group: '*'
+    kind: RoleBinding
+  - group: '*'
+    kind: ClusterTask
+  destinations:
+  - namespace: dev-project1
+    server: https://kubernetes.default.svc
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: NetworkPolicy
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: test-project1
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: Namespace
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: Pipeline
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: LimitRange
+  - group: '*'
+    kind: ResourceQuota
+  - group: '*'
+    kind: Deployment
+  - group: '*'
+    kind: DeploymentConfig
+  - group: '*'
+    kind: Service
+  - group: '*'
+    kind: Route
+  destinations:
+  - namespace: test-project1
+    server: https://kubernetes.default.svc
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: NetworkPolicy
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: homo-project1
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: Namespace
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: Pipeline
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: LimitRange
+  - group: '*'
+    kind: ResourceQuota
+  - group: '*'
+    kind: Deployment
+  - group: '*'
+    kind: DeploymentConfig
+  - group: '*'
+    kind: Service
+  - group: '*'
+    kind: Route
+  - group: '*'
+    kind: RoleBinding
+  - group: '*'
+    kind: ClusterTask
+  destinations:
+  - namespace: homo-project1
+    server: https://kubernetes.default.svc
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: NetworkPolicy
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: project1-set
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  generators:
+  - list:
+      elements:
+      - env: dev
+        project: project1
+      - env: test
+        project: project1
+      - env: homo
+        project: project1
+  template:
+    metadata:
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      name: '{{env}}-{{project}}'
+      namespace: openshift-gitops
+    spec:
+      destination:
+        namespace: '{{env}}-{{project}}'
+        server: https://kubernetes.default.svc
+      project: '{{project}}'
+      source:
+        repoURL: git@/openshift-gitops.git
+        targetRevision: noprod
+        path: proyectos/{{project}}/{{env}}
+        directory:
+          recurse: true
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+        - Validate=false
+        - CreateNamespace=true
+        - ApplyOutOfSyncOnly=true

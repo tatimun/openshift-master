@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: clustertask-project
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: ClusterTask
+  - group: '*'
+    kind: Pipeline
+  destinations:
+  - namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  - namespace: dev-project1
+    server: https://kubernetes.default.svc
+  - namespace: test-project1
+    server: https://kubernetes.default.svc
+  - namespace: homo-project1
+    server: https://kubernetes.default.svc
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clustertask-app
+  namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: 'openshift-gitops'
+    server: 'https://kubernetes.default.svc'
+  source:
+    repoURL: 'git@REPO/gitops-pipelines.git'
+    path: '.'
+    targetRevision: noprod
+    directory:
+      recurse: true
+  project: 'clustertask-project'
+  syncPolicy: {}

@@ -12,7 +12,7 @@ spec:
   project: dev-project1
   source:
     path: overlay/dev
-    repoURL: git@REPO:REPO/app1-gitops.git
+    repoURL: https://github.com/tatimun/ArgoCD-App2.git
     targetRevision: master
   syncPolicy:
     automated:

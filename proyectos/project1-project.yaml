@@ -211,8 +211,8 @@ spec:
         server: https://kubernetes.default.svc
       project: '{{project}}'
       source:
-        repoURL: git@/openshift-gitops.git
-        targetRevision: noprod
+        repoURL: https://github.com/tatimun/openshift-master.git
+        targetRevision: main
         path: proyectos/{{project}}/{{env}}
         directory:
           recurse: true

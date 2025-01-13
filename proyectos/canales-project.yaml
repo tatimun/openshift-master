@@ -1,0 +1,85 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: canales
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: Namespace
+  - group: argoproj.io
+    kind: Application
+  - group: argoproj.io
+    kind: AppProject
+  - group: argoproj.io
+    kind: ApplicationSet
+  - group: '*'
+    kind: Secret
+  - group: '*'
+    kind: PersistentVolumeClaim
+  - group: '*'
+    kind: Pipeline
+  - group: '*'
+    kind: ServiceAccount
+  - group: '*'
+    kind: LimitRange
+  - group: '*'
+    kind: ResourceQuota
+  - group: '*'
+    kind: ClusterTask
+  destinations:
+  - namespace: openshift-gitops
+    server: https://kubernetes.default.svc
+  - namespace: canales-prod
+    server: https://kubernetes.default.svc
+  namespaceResourceBlacklist:
+  - group: ''
+    kind: NetworkPolicy
+  sourceRepos:
+  - '*'
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: canales-set
+  namespace: openshift-gitops
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  generators:
+  - list:
+      elements:
+      - env: prod
+        project: canales
+  template:
+    metadata:
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io
+      name: '{{env}}-{{project}}'
+      namespace: openshift-gitops
+    spec:
+      destination:
+        namespace: '{{env}}-{{project}}'
+        server: https://kubernetes.default.svc
+      project: '{{project}}'
+      source:
+        repoURL: https://github.com/tatimun/openshift-master.git
+        targetRevision: main
+        path: proyectos/{{project}}/{{env}}
+        directory:
+          recurse: true
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
+        syncOptions:
+        - Validate=false
+        - CreateNamespace=true
+        - ApplyOutOfSyncOnly=true

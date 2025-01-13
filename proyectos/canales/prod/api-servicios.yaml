@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: api-servicios
+  namespace: openshift-gitops
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    server: 'https://kubernetes.default.svc'
+  source:
+    repoURL: 'https://github.com/tatimun/openshift-master.git'
+    path: '.'
+    targetRevision: main
+    directory:
+      recurse: true
+  project: 'clustertask-project'
+  syncPolicy: {}

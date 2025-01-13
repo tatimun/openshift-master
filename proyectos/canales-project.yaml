@@ -59,13 +59,13 @@ spec:
       namespace: openshift-gitops
     spec:
       destination:
-        namespace: '{{env}}-{{project}}'
+        namespace: '{{project}}-{{env}}'
         server: https://kubernetes.default.svc
       project: '{{project}}'
       source:
         repoURL: https://github.com/tatimun/openshift-master.git
         targetRevision: main
-        path: proyectos/{{project}}/{{env}}
+        path: proyectos
         directory:
           recurse: true
       syncPolicy:

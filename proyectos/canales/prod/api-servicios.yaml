@@ -9,10 +9,10 @@ spec:
   destination:
     server: 'https://kubernetes.default.svc'
   source:
-    repoURL: 'https://github.com/tatimun/openshift-master.git'
+    repoURL: 'https://github.com/tatimun/solar-system'
     path: '.'
     targetRevision: main
     directory:
       recurse: true
-  project: 'clustertask-project'
+  project: 'canales'
   syncPolicy: {}

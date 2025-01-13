@@ -35,7 +35,7 @@ spec:
     path: ./
   destination:
     server: https://kubernetes.default.svc
-    namespace: openshift-gitops
+    namespace: canales-prod
   syncPolicy:
     automated:
       prune: true

@@ -27,7 +27,6 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: solar-system
-  namespace: openshift-gitops
 spec:
   project: canales
   source:

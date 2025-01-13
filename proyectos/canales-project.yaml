@@ -15,3 +15,23 @@ spec:
   namespaceResourceBlacklist:
   - group: ''
     kind: NetworkPolicy
+---
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: solar-system
+  namespace: openshift-gitops
+spec:
+  project: canales
+  source:
+    repoURL: https://github.com/tatimun/solar-system
+    targetRevision: main
+    path: ./
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: openshift-gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

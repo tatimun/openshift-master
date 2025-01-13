@@ -27,16 +27,15 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: solar-system
+  namespace: canales-prod
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
+  destination:
+    namespace: canales-prod
+    server: https://kubernetes.default.svc
   project: canales
   source:
+    path: ./
     repoURL: https://github.com/tatimun/solar-system
     targetRevision: main
-    path: ./
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: canales-prod
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true

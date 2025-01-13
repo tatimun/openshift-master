@@ -1,8 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
   name: canales
   namespace: openshift-gitops
   annotations:
@@ -42,12 +40,9 @@ spec:
   sourceRepos:
   - '*'
 ---
-
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
   name: canales-set
   namespace: openshift-gitops
   annotations:
@@ -60,8 +55,6 @@ spec:
         project: canales
   template:
     metadata:
-      finalizers:
-      - resources-finalizer.argocd.argoproj.io
       name: '{{env}}-{{project}}'
       namespace: openshift-gitops
     spec:

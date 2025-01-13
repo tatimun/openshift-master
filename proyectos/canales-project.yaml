@@ -65,7 +65,7 @@ spec:
       source:
         repoURL: https://github.com/tatimun/openshift-master.git
         targetRevision: main
-        path: proyectos/{{project}}/{{env}}
+        path: proyectos
         directory:
           recurse: true
       syncPolicy:

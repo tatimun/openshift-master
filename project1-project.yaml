@@ -197,17 +197,17 @@ spec:
         project: project1
       - env: test
         project: project1
-      - env: homo
+      - env: prod
         project: project1
   template:
     metadata:
       finalizers:
       - resources-finalizer.argocd.argoproj.io
-      name: '{{env}}-{{project}}'
+      name: '{{project}}-{{env}}'
       namespace: openshift-gitops
     spec:
       destination:
-        namespace: '{{env}}-{{project}}'
+        namespace: '{{project}}-{{env}}'
         server: https://kubernetes.default.svc
       project: '{{project}}'
       source:
